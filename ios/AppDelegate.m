@@ -1,41 +1,22 @@
 #import "AppDelegate.h"
 #import "MendixAppDelegate.h"
-#import "MendixNative/MendixNative.h"
+#import "MendixNative.h"
 #import "IQKeyboardManager/IQKeyboardManager.h"
 #import "SplashScreenPresenter.h"
 
 @implementation AppDelegate
 
 @synthesize shouldOpenInLastApp;
+@synthesize hasHandledLaunchAppWithOptions;
 
 - (BOOL) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+  [self clearKeychain];
+  MendixAppDelegate.delegate = self;
   [MendixAppDelegate application:application didFinishLaunchingWithOptions:launchOptions];
   [self setupUI];
-  
+
   NSBundle *mainBundle = [NSBundle mainBundle];
-  NSString *targetName = [mainBundle objectForInfoDictionaryKey:@"TargetName"] ?: @"";
 
-  if ([targetName  isEqual: @"dev"]) {
-    IQKeyboardManager.sharedManager.enable = NO;
-
-    if (launchOptions == nil) {
-      return YES;
-    }
-
-    NSString *url = [AppPreferences getAppUrl];
-    if (url == nil) {
-      return YES;
-    }
-    
-    shouldOpenInLastApp = YES;
-    NSURL *bundleUrl = [AppUrl forBundle:url port:[AppPreferences getRemoteDebuggingPackagerPort] isDebuggingRemotely:[AppPreferences remoteDebuggingEnabled] isDevModeEnabled:[AppPreferences devModeEnabled]];
-    NSURL *runtimeUrl = [AppUrl forRuntime:url];
-    MendixApp *mendixApp = [[MendixApp alloc] init:nil bundleUrl:bundleUrl runtimeUrl:runtimeUrl warningsFilter:[self getWarningFilterValue] isDeveloperApp:YES clearDataAtLaunch:NO];
-    [ReactNative.instance setup:mendixApp launchOptions:launchOptions];
-
-    return YES;
-  }
-  
   self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
   self.window.rootViewController = [UIViewController new];
   [self.window makeKeyAndVisible];
@@ -46,8 +27,8 @@
     return NO;
   }
   NSURL *runtimeUrl = [AppUrl forRuntime:[url stringByReplacingOccurrencesOfString:@"\\" withString:@""]];
-  NSURL *bundleUrl = [ReactNative.instance getJSBundleFile];
-  
+  NSURL *bundleUrl = [MendixAppDelegate getJSBundleFile];
+
   if (bundleUrl != nil) {
     [ReactNative.instance setup:[[MendixApp alloc] init:nil bundleUrl:bundleUrl runtimeUrl:runtimeUrl warningsFilter:none isDeveloperApp:NO clearDataAtLaunch:NO splashScreenPresenter:[SplashScreenPresenter new]] launchOptions:launchOptions];
     [ReactNative.instance start];
@@ -71,17 +52,12 @@ fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHand
   [MendixAppDelegate application:application didRegisterUserNotificationSettings:notificationSettings];
 }
 
-- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-  [MendixAppDelegate application:application openURL:url sourceApplication:sourceApplication annotation:annotation];
-  return YES;
+- (BOOL) application:(UIApplication *)app openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+	return [MendixAppDelegate application:app openURL:url options:options];
 }
 
 - (WarningsFilter) getWarningFilterValue {
-#if DEBUG
-  return all;
-#else
-  return [AppPreferences devModeEnabled] ? partial : none;
-#endif
+  return none;
 }
 
 - (void) showUnrecoverableDialogWithTitle:(NSString *)title message:(NSString *) message {
@@ -97,4 +73,24 @@ fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHand
     [UIDatePicker appearance].preferredDatePickerStyle = UIDatePickerStyleWheels;
   }
 }
+
+- (void) userNotificationCenter:(UNUserNotificationCenter *)center
+        willPresentNotification:(UNNotification *)notification
+          withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
+  [MendixAppDelegate userNotificationCenter:center willPresentNotification:notification withCompletionHandler:completionHandler];
+}
+
+- (void) userNotificationCenter:(UNUserNotificationCenter *)center
+    didReceiveNotificationResponse:(UNNotificationResponse *)response
+             withCompletionHandler:(void (^)(void))completionHandler {
+  [MendixAppDelegate userNotificationCenter:center didReceiveNotificationResponse:response withCompletionHandler:completionHandler];
+}
+
+- (void) clearKeychain {
+  if ([NSUserDefaults.standardUserDefaults boolForKey:@"HAS_RUN_BEFORE"] == NO) {
+    [NSUserDefaults.standardUserDefaults setBool:YES forKey:@"HAS_RUN_BEFORE"];
+    [ReactNative clearKeychain];
+  }
+}
+
 @end

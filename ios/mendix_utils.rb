@@ -11,8 +11,15 @@ def generate_pod_dependencies
       next
     end
 
-    next unless capability["ios"] && pods = capability["ios"]["pods"]
-    resolved_pods.merge! pods
+    next unless config = capability["ios"]
+
+    if !config["pods"].nil?
+      resolved_pods.merge! config["pods"]
+    end
+
+    if !config["buildPhases"].nil?
+      include_script_phases(config["buildPhases"])
+    end
   end
 
   modules = get_react_native_config["dependencies"]
@@ -32,6 +39,13 @@ def generate_mendix_delegate
     didReceiveRemoteNotification: [],
     didRegisterUserNotificationSettings: [],
     openURL: [],
+    willPresentNotification: [],
+    didReceiveNotificationResponse: [],
+    getJSBundleFile: [],
+  }
+
+  returnHooks = {
+    boolean_openURLWithOptions: [],
   }
 
   capabilities_setup_config = get_capabilities_setup_config
@@ -53,11 +67,16 @@ def generate_mendix_delegate
     hooks.each do |name, hook|
       hook << capability[name.to_s].map { |line| "  #{line}" } if !capability[name.to_s].nil?
     end
+
+    returnHooks.each do |name, hook|
+      hook << capability[name.to_s].map { |line| "  #{line}" } if !capability[name.to_s].nil?
+    end
   end
 
   File.open("MendixAppDelegate.m", "w") do |file|
     mendix_app_delegate = mendix_app_delegate_template.sub("{{ imports }}", stringify(imports))
     hooks.each { |name, hook| mendix_app_delegate.sub!("{{ #{name.to_s} }}", stringify(hook)) }
+    returnHooks.each { |name, hook| mendix_app_delegate.sub!("{{ #{name.to_s} }}", stringify(hook).length > 0 ? stringify(hook) : "  return YES;") }
     file << mendix_app_delegate
   end
 end
@@ -65,10 +84,13 @@ end
 def mendix_app_delegate_template
   %(// DO NOT EDIT BY HAND. THIS FILE IS AUTO-GENERATED
 #import <Foundation/Foundation.h>
+#import <MendixNative.h>
 #import "MendixAppDelegate.h"
 {{ imports }}
 
 @implementation MendixAppDelegate
+
+static UIResponder<UIApplicationDelegate, UNUserNotificationCenterDelegate> *_Nullable delegate;
 
 + (void) application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 {{ didFinishLaunchingWithOptions }}
@@ -87,8 +109,33 @@ fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHand
 {{ didRegisterUserNotificationSettings }}
 }
 
++ (BOOL) application:(UIApplication *)application openURL:(NSURL *)url options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options {
+{{ boolean_openURLWithOptions }}
+}
+
 + (void) application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
 {{ openURL }}
+}
+
++ (void) userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions options))completionHandler {
+{{ willPresentNotification }}
+}
+
++ (void) userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler {
+{{ didReceiveNotificationResponse }}
+}
+
++ (UIResponder<UIApplicationDelegate, UNUserNotificationCenterDelegate> *_Nullable) delegate {
+  return delegate;
+}
+
++ (void) setDelegate:(UIResponder<UIApplicationDelegate, UNUserNotificationCenterDelegate> *_Nonnull)value {
+  delegate = value;
+}
+
++ (NSURL *) getJSBundleFile {
+{{ getJSBundleFile }}
+  return [ReactNative.instance getJSBundleFile];
 }
 
 @end\n)
@@ -139,5 +186,21 @@ def include_pods(pods = {})
     else
       pod name
     end
+  end
+end
+
+def include_script_phases(phases)
+  phases.each do |phase|
+    if phase["path"]
+      phase["script"] = File.read(File.expand_path(phase["path"], ".."))
+      phase.delete("path")
+    end
+
+    if phase["execution_position"]
+      phase["execution_position"] = phase["execution_position"].to_sym
+    end
+
+    phase = Hash[phase.map { |k, v| [k.to_sym, v] }]
+    script_phase phase
   end
 end

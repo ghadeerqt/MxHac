@@ -3,10 +3,14 @@
     "trigger": "manual",
     "testEnabled": false,
     "signed": false,
-    "environmentVariables": [{ "name": "CODE_PUSH_KEY", "value": "" }, { "name": "IS_DEV_APP", "value": false }],
+    "environmentVariables": [
+        { "name": "CODE_PUSH_KEY", "value": "" },
+        { "name": "IS_DEV_APP", "value": false },
+        { "name": "SUPPORTS_MOBILE_TOOLKIT", "value": false }
+    ],
     "toolsets": {
       "xcode": {
-        "xcodeVersion": "12.0",
+        "xcodeVersion": "13.2.1",
         "automaticSigning": false,
         "projectOrWorkspacePath": "ios/NativeTemplate.xcworkspace",
         "podfilePath": "ios/Podfile",
@@ -15,7 +19,7 @@
       "javascript": {
         "packageJsonPath": "package.json",
         "runTests": false,
-        "nodeVersion": "12.x"
+        "nodeVersion": "14.x"
       },
       "buildscripts": {
         "package.json": {
@@ -29,7 +33,11 @@
     "trigger": "manual",
     "testEnabled": false,
     "signed": false,
-    "environmentVariables": [{ "name": "CODE_PUSH_KEY", "value": "" }, { "name": "IS_DEV_APP", "value": false }],
+    "environmentVariables": [
+      { "name": "CODE_PUSH_KEY", "value": "" },
+      { "name": "IS_DEV_APP", "value": false },
+      { "name": "SUPPORTS_MOBILE_TOOLKIT", "value": false }
+    ],
     "toolsets": {
       "android": {
         "module": "app",
@@ -43,7 +51,7 @@
       "javascript": {
         "packageJsonPath": "package.json",
         "runTests": false,
-        "nodeVersion": "12.x"
+        "nodeVersion": "14.x"
       },
       "buildscripts": {
         "package.json": {
