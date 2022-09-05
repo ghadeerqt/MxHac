@@ -1,0 +1,68 @@
+{
+  "project_info": {
+    "project_number": "872747814607",
+    "project_id": "mxhacks",
+    "storage_bucket": "mxhacks.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:872747814607:android:93496983c1b0bcb0ac31ba",
+        "android_client_info": {
+          "package_name": "com.Avertra.MendixHack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "872747814607-pjgnga0sos05marn39tehltu3cd30q0p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDveUBHKhj9Y-rSqmAEfJegCrVQuM-HOFo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "872747814607-pjgnga0sos05marn39tehltu3cd30q0p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:872747814607:android:407f792e13114b96ac31ba",
+        "android_client_info": {
+          "package_name": "myapp.mxhackathon"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "872747814607-pjgnga0sos05marn39tehltu3cd30q0p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDveUBHKhj9Y-rSqmAEfJegCrVQuM-HOFo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "872747814607-pjgnga0sos05marn39tehltu3cd30q0p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

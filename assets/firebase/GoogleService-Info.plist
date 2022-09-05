@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>872747814607-uhj6pgkg2sk3qdlk0teifgv2u6mite45.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.872747814607-uhj6pgkg2sk3qdlk0teifgv2u6mite45</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBHn_xBedBX2SEu_sWHQ4bWK6T6AI8bxOM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>872747814607</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>myapp.mxhackathon</string>
+	<key>PROJECT_ID</key>
+	<string>mxhacks</string>
+	<key>STORAGE_BUCKET</key>
+	<string>mxhacks.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:872747814607:ios:0ee84d9012c82196ac31ba</string>
+</dict>
+</plist>
